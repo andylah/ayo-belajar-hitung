@@ -1,0 +1,318 @@
+using System;
+using System.Collections.Generic;
+using GoogleMobileAds.Api;
+using UnityEngine;
+
+ 
+    public class AdsController : MonoBehaviour
+    {
+        public static AdsController Instance;
+    // These ad units are configured to always serve test ads.
+#if UNITY_EDITOR
+    string bannerAdUnitId = "unused";
+        string InterstitialAdUnitId = "unused";
+    #elif UNITY_ANDROID
+        string bannerAdUnitId = "ca-app-pub-3212738706492790/6113697308";
+        string InterstitialAdUnitId = "ca-app-pub-3940256099942544/1033173712";
+    #elif UNITY_IPHONE
+        string bannerAdUnitId = "ca-app-pub-3212738706492790/5381898163";
+        string InterstitialAdUnitId = "ca-app-pub-3940256099942544/4411468910";
+    #else
+        string bannerAdUnitId = "unexpected_platform";
+        string InterstitialAdUnitId = "unexpected_platform";
+    #endif
+
+        private BannerView _bannerView;
+    private InterstitialAd _interstitialAd;
+
+    private void Awake()
+        {
+            // Ensure that only one instance of AdsController exists.
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+    }
+
+    public void Start()
+    {
+        // Initialize the Google Mobile Ads SDK.
+        // Set your test devices.
+        // https://developers.google.com/admob/unity/test-ads
+        RequestConfiguration requestConfiguration = new RequestConfiguration
+        {
+            TestDeviceIds = new List<string>
+            {
+                AdRequest.TestDeviceSimulator,
+                // Add your test device IDs (replace with your own device IDs).
+                #if UNITY_IPHONE
+                "96e23e80653bb28980d3f40beb58915c"
+                #elif UNITY_ANDROID
+                "75EF8D155528C04DACBBA6F36F433035"
+                #endif
+            }
+        };
+        MobileAds.SetRequestConfiguration(requestConfiguration);
+
+        // Initialize the Google Mobile Ads SDK.
+        MobileAds.Initialize((InitializationStatus status) =>
+        {
+            RequestAds();
+        });
+    }
+
+    private void RequestAds()
+    {
+        // Clean up banner ad before creating a new one.
+        if (_bannerView != null)
+        {
+            _bannerView.Destroy();
+        }
+
+        AdSize adaptiveSize =
+                AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
+
+        _bannerView = new BannerView(bannerAdUnitId, adaptiveSize, AdPosition.Bottom);
+
+        // Register for ad events.
+        _bannerView.OnBannerAdLoaded += OnBannerAdLoaded;
+        _bannerView.OnBannerAdLoadFailed += OnBannerAdLoadFailed;
+
+        AdRequest adRequest = new AdRequest();
+
+        // Load a banner ad.
+        _bannerView.LoadAd(adRequest);
+
+    }
+
+    #region Banner callback handlers
+    private void OnBannerAdLoaded()
+    {
+        Debug.Log("Banner view loaded an ad with response : "
+                    + _bannerView.GetResponseInfo());
+        Debug.Log("Ad Height: "+ _bannerView.GetHeightInPixels()+" width: "+ _bannerView.GetWidthInPixels());
+    }
+
+    private void OnBannerAdLoadFailed(LoadAdError error)
+    {
+        Debug.LogError("Banner view failed to load an ad with error : "
+                + error);
+    }
+
+        #endregion
+
+        #region Interstitial
+        private void LoadInterstitialAd() {
+            if (_interstitialAd != null)
+            {
+                _interstitialAd.Destroy();
+                _interstitialAd = null;
+            }
+            var adRequest = new AdRequest();
+
+            InterstitialAd.Load(InterstitialAdUnitId, adRequest, (InterstitialAd ad, LoadAdError error) =>
+            {
+                if (error != null || ad==null )
+                {
+                    print("Interstitial ad failed to load with error: " + error);
+                    return;
+                }
+                print("Interstitial ad loaded "+ad.GetResponseInfo());
+                _interstitialAd = ad;
+                InterstitialEvent(ad);
+            });
+        }
+   
+        public void ShowInterstitialAd() { 
+            if(_interstitialAd != null)
+            {
+              _interstitialAd.Show();
+            }
+            else
+            {
+                Debug.Log("Interstitial ad is not ready yet.");
+            }
+        }
+        private void InterstitialEvent(InterstitialAd ad) {
+            _interstitialAd.OnAdPaid += (AdValue adValue) =>
+            {
+                // Raised when the ad is estimated to have earned money.
+                Debug.Log(String.Format("Interstitial ad paid {0} {1}.",
+                        adValue.Value,
+                        adValue.CurrencyCode));
+            };
+            _interstitialAd.OnAdImpressionRecorded += () =>
+            {
+                Debug.Log("Interstitial ad recorded an impression.");
+                // Raised when an impression is recorded for an ad.
+            };
+            _interstitialAd.OnAdClicked += () =>
+            {
+                Debug.Log("Interstitial ad was clicked.");
+                // Raised when a click is recorded for an ad.
+            };
+            _interstitialAd.OnAdFullScreenContentOpened += () =>
+            {
+                Debug.Log("Interstitial ad full screen content opened.");
+                // Raised when the ad opened full screen content.
+            };
+            _interstitialAd.OnAdFullScreenContentClosed += () =>
+            {
+                Debug.Log("Interstitial ad full screen content closed.");
+                // Raised when the ad closed full screen content.
+            };
+            _interstitialAd.OnAdFullScreenContentFailed += (AdError error) =>
+            {
+                Debug.LogError("Interstitial ad failed to open full screen content with error : "
+                        + error);
+                // Raised when the ad failed to open full screen content.
+            };
+        }
+
+        #endregion
+    }
+
+    ads V2
+    public static AdsController Instance;
+
+#if UNITY_EDITOR
+    string bannerAdUnitId = "unused";
+    string InterstitialAdUnitId = "unused";
+#elif UNITY_ANDROID
+    string bannerAdUnitId = "ca-app-pub-3619184054099014/1748124773";
+    string InterstitialAdUnitId = "ca-app-pub-3619184054099014/2899879752";
+#else
+    string bannerAdUnitId = "unexpected_platform";
+    string InterstitialAdUnitId = "unexpected_platform";
+#endif
+
+    private BannerView _bannerView;
+    private InterstitialAd _interstitialAd;
+
+    private void Awake()
+    {
+        // Singleton pattern
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
+    public void Start()
+    {
+        MobileAds.Initialize((InitializationStatus status) =>
+        {
+            RequestAds();
+            LoadInterstitialAd(); // <== langsung load interstitial di awal
+        });
+    }
+
+    private void RequestAds()
+    {
+        if (_bannerView != null)
+        {
+            _bannerView.Destroy();
+        }
+
+        AdSize adaptiveSize =
+            AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
+
+        _bannerView = new BannerView(bannerAdUnitId, adaptiveSize, AdPosition.Bottom);
+
+        _bannerView.OnBannerAdLoaded += OnBannerAdLoaded;
+        _bannerView.OnBannerAdLoadFailed += OnBannerAdLoadFailed;
+
+        AdRequest adRequest = new AdRequest();
+        _bannerView.LoadAd(adRequest);
+    }
+
+    #region Banner callback handlers
+    private void OnBannerAdLoaded()
+    {
+        Debug.Log("Banner view loaded an ad with response : " + _bannerView.GetResponseInfo());
+        Debug.Log("Ad Height: " + _bannerView.GetHeightInPixels() + " width: " + _bannerView.GetWidthInPixels());
+    }
+
+    private void OnBannerAdLoadFailed(LoadAdError error)
+    {
+        Debug.LogError("Banner view failed to load an ad with error : " + error);
+    }
+    #endregion
+
+    #region Interstitial
+    private void LoadInterstitialAd()
+    {
+        if (_interstitialAd != null)
+        {
+            _interstitialAd.Destroy();
+            _interstitialAd = null;
+        }
+        var adRequest = new AdRequest();
+
+        InterstitialAd.Load(InterstitialAdUnitId, adRequest, (InterstitialAd ad, LoadAdError error) =>
+        {
+            if (error != null || ad == null)
+            {
+                Debug.Log("Interstitial ad failed to load with error: " + error);
+                return;
+            }
+            Debug.Log("Interstitial ad loaded " + ad.GetResponseInfo());
+            _interstitialAd = ad;
+            InterstitialEvent(ad);
+        });
+    }
+
+    public void ShowInterstitialAd()
+    {
+        if (_interstitialAd != null)
+        {
+            _interstitialAd.Show();
+        }
+        else
+        {
+            Debug.Log("Interstitial ad is not ready yet. Reloading...");
+            LoadInterstitialAd(); // <== kalau belum siap, langsung request baru
+        }
+    }
+
+    private void InterstitialEvent(InterstitialAd ad)
+    {
+        _interstitialAd.OnAdPaid += (AdValue adValue) =>
+        {
+            Debug.Log(String.Format("Interstitial ad paid {0} {1}.", adValue.Value, adValue.CurrencyCode));
+        };
+        _interstitialAd.OnAdImpressionRecorded += () =>
+        {
+            Debug.Log("Interstitial ad recorded an impression.");
+        };
+        _interstitialAd.OnAdClicked += () =>
+        {
+            Debug.Log("Interstitial ad was clicked.");
+        };
+        _interstitialAd.OnAdFullScreenContentOpened += () =>
+        {
+            Debug.Log("Interstitial ad full screen content opened.");
+        };
+        _interstitialAd.OnAdFullScreenContentClosed += () =>
+        {
+            Debug.Log("Interstitial ad full screen content closed.");
+            LoadInterstitialAd(); // <== load ulang setelah iklan ditutup
+        };
+        _interstitialAd.OnAdFullScreenContentFailed += (AdError error) =>
+        {
+            Debug.LogError("Interstitial ad failed to open full screen content with error : " + error);
+            LoadInterstitialAd(); // <== kalau gagal tampil, request ulang
+        };
+    }
+    #endregion

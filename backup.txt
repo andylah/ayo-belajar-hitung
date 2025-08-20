@@ -1,0 +1,104 @@
+void GenerateSoal()
+    {
+        if (isGameOver) return; // Prevent generating new question if game is over
+
+        do
+        {
+            currentOperator = (Operator)Random.Range(0, 3); // Randomly select an operator
+            switch (currentOperator)
+            {
+                case Operator.Tambah:
+                    if (currentLevel < 2)
+                    {
+                        angka1 = Random.Range(1, 9);
+                        angka2 = Random.Range(1, 9);
+                    } else if (currentLevel > 2 && currentLevel < 5)
+                    {
+                        angka1 = Random.Range(10, 50);
+                        angka2 = Random.Range(10, 50);
+                    }
+                    else
+                    {
+                        angka1 = Random.Range(50, 99);
+                        angka2 = Random.Range(50, 99);
+                    }
+                    jawabanBenar = angka1 + angka2;
+                    break;
+
+                case Operator.Kurang:
+                    if (currentLevel < 2)
+                    {
+                        angka1 = Random.Range(1, 9);
+                        angka2 = Random.Range(1, angka1 + 1);
+                    }
+                    else if (currentLevel > 2 && currentLevel < 5)
+                    {
+                        angka1 = Random.Range(10, 50);
+                        angka2 = Random.Range(10, angka1 + 10);
+                    }
+                    else
+                    {
+                        angka1 = Random.Range(50, 99);
+                        angka2 = Random.Range(50, angka1 + 50);
+                    }
+                   
+                    jawabanBenar = angka1 - angka2;
+                    break;
+
+                case Operator.Kali:
+                    if (currentLevel < 2)
+                    {
+                        angka1 = Random.Range(1, 9);
+                        angka2 = Random.Range(1, 9);
+                    }
+                    else if (currentLevel > 2 && currentLevel < 5)
+                    {
+                        angka1 = Random.Range(10, 50);
+                        angka2 = Random.Range(10, 50);
+                    }
+                    else
+                    {
+                        angka1 = Random.Range(50, 99);
+                        angka2 = Random.Range(50, 99);
+                    }
+                 
+                    jawabanBenar = angka1 * angka2;
+                    break;
+            }
+        } while (angka1 == prevAngka1 && angka2 == prevAngkas2 && currentOperator == prevOperator);
+        prevAngka1 = angka1;
+        prevAngkas2 = angka2;
+        prevOperator = currentOperator;
+
+        //angka1Image.sprite = angkaSprites[angka1];
+        //angka2Image.sprite = angkaSprites[angka2];
+
+        TampilkanAngka2Digit(angka1, digit1Angka1Image, digit2Angka1Image);
+        TampilkanAngka2Digit(angka2, digit1Angka2Image, digit2Angka2Image);
+
+        operatorImage.sprite = operatorSprites[(int)currentOperator]; // Set the operator image based on the current operator
+
+        int jawabanBenarIndex = Random.Range(0, jawabanButtons.Length);
+        for (int i = 0; i < jawabanButtons.Length; i++)
+        {
+            int pilihan;
+            if (i == jawabanBenarIndex)
+            {
+                pilihan = jawabanBenar; // Set the correct answer
+            }
+            else
+            {
+                do
+                {
+                    pilihan = Random.Range(1, 26); // Generate a random answer
+                } while (pilihan == jawabanBenar); // Ensure it's not the correct answer
+            }
+            jawabanTexts[i].text = pilihan.ToString(); // Set the text for the button
+            jawabanButtons[i].onClick.RemoveAllListeners(); // Clear previous listeners
+
+        }
+
+        feedbackText.text = ""; // Clear feedback text
+        timer = 5f; // Reset the timer
+        sudahJawab = false; // Reset the answer state
+    }
