@@ -25,6 +25,67 @@ git push origin main
 🔹 E. Tarik update dari GitHub (kalau kerja tim)
 git pull origin main
 
+1. Versioning pakai Git Tag
+
+Git punya fitur tag, biasanya dipakai untuk menandai versi rilis (release).
+
+Contoh:
+# Buat tag v1.0.0
+git tag -a v1.0.0 -m "Release versi 1.0.0 - first stable build"
+
+# Kirim tag ke GitHub
+git push origin v1.0.0
+
+
+Setelah itu di GitHub, kamu akan lihat di tab Releases → versi v1.0.0 akan muncul.
+Ini enak untuk melacak build (misalnya kamu upload APK/Build ke Google Play, bisa dicatat versi Git-nya).
+
+🔹 2. Branch untuk Versi Development
+
+Selain pakai main, kamu bisa buat branch khusus:
+
+git checkout -b dev
+
+
+Lalu kerja di dev, dan kalau sudah stabil → merge ke main.
+Misalnya:
+
+main → hanya untuk rilis stabil
+
+dev → tempat eksperimen/fitur baru
+
+hotfix/ → kalau ada perbaikan bug cepat
+
+🔹 3. Simpan Versi di Unity sendiri
+
+Unity juga punya Player Settings untuk versi build:
+
+Buka Edit > Project Settings > Player.
+
+Pada tab Other Settings:
+
+Version → isi 1.0.0
+
+Bundle Version Code (Android) → angka integer (misalnya 1, 2, 3, ... untuk setiap upload ke Play Store).
+
+Build Number (iOS) → mirip, angka integer naik tiap rilis.
+
+⚠️ Penting:
+
+Google Play hanya menerima APK/AAB baru kalau versionCode lebih tinggi dari sebelumnya.
+
+Jadi walau Version bisa sama (1.0.0), pastikan versionCode naik (1 → 2 → 3 ...).
+
+🔹 4. Best Practice
+
+Gunakan Git tag untuk menandai rilis di repo.
+
+Gunakan Player Settings > Version & Bundle Version Code untuk sinkron dengan build APK/AAB.
+
+Tambahkan file CHANGELOG.md di repo, biar tiap versi ada catatan perubahan.
+
+👉 Mau aku bikinkan contoh workflow rilis Unity project dengan Git + Play Store, lengkap step versioning + upload APK/AAB?
+
 
 
 using System;
