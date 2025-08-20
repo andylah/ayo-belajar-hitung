@@ -1,3 +1,32 @@
+﻿Workflow Harian pakai CLI
+
+Misalnya kamu sudah di dalam folder project Unity.
+
+🔹 A. Cek status
+git status
+
+
+Lihat file mana yang berubah.
+
+🔹 B. Tambahkan file yang berubah
+git add .
+
+
+Kalau mau lebih aman, bisa spesifik:
+
+git add Assets/Scripts/IAPManager.cs
+
+🔹 C. Commit perubahan
+git commit -m "Tambah fungsi Remove Ads IAP"
+
+🔹 D. Push ke GitHub
+git push origin main
+
+🔹 E. Tarik update dari GitHub (kalau kerja tim)
+git pull origin main
+
+
+
 using System;
 using System.Collections.Generic;
 using GoogleMobileAds.Api;

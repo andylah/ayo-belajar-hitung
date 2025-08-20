@@ -61,4 +61,10 @@ public class IAPManager : MonoBehaviour, IStoreListener
     {
         Debug.LogError("Purchase failed: " + product.definition.id + " - " + reason);
     }
+
+    public void OnPurchaseDeferred(Product product)
+    {
+        Debug.Log($"Purchase deferred: {product.definition.id}. Waiting for approval.");
+        // Bisa tampilkan popup "Menunggu persetujuan pembayaran"
+    }
 }
