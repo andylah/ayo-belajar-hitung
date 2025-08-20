@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI gameOverLevelText;
     public TextMeshProUGUI levelText;
     public TextMeshProUGUI lblUsername;
+    public CanvasGroup BtnJawabanGroup;
 
     public GameObject gameOverPanel; // Panel to show when the game is over
     public Image star_1;
@@ -19,6 +20,10 @@ public class GameController : MonoBehaviour
 
     private bool sudahJawab = false;
     bool isGameOver = false;
+    bool isPaused = false;
+    public Sprite pauseIcon;
+    public Sprite playIcon;
+    public Image pauseButtonImage;
 
     public Image timerImage;
     public Sprite[] angkaSprites;
@@ -74,6 +79,28 @@ public class GameController : MonoBehaviour
 
         //Debug.Log("Timer di GameScene: " + timer + " detik");
 
+    }
+
+    public void TonggleBtnPause()
+    {
+
+        if (isPaused)
+        {
+            Time.timeScale = 1f;
+            pauseButtonImage.sprite = pauseIcon;
+            isPaused = false;
+            BtnJawabanGroup.interactable = true; // Enable buttons when resumed
+            BtnJawabanGroup.blocksRaycasts = true; // Enable raycasts for buttons
+        }
+        else
+        {
+            AdsController.Instance.ShowInterstitialAd();
+            Time.timeScale = 0f;
+            pauseButtonImage.sprite = playIcon;
+            isPaused = true;
+            BtnJawabanGroup.interactable = false; // Disable buttons when paused
+            BtnJawabanGroup.blocksRaycasts = false; // Disable raycasts for buttons
+        }
     }
 
     void ApplyMusicSetting()
