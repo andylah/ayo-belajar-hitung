@@ -37,11 +37,17 @@ public class GameController : MonoBehaviour
     public Image angka1sprite;
     public Image angka2sprite;
 
+    public Image[] nyawaSprite;
+    public Sprite nyawaPenuhSprite;
+    public Sprite nyawaHabisSprite;
+
     private float timer;
     private int skor = 0;
     private int angka1, angka2, jawabanBenar;
-    
+    private int nyawa = 3; // Starting lives
+
     private int prevAngka1 = -1, prevAngkas2 = -1;
+    private int prevJawaban = int.MinValue;
     private int currentLevel = 1;
     //private int angkaKe = 1;
     enum Operator { Tambah, Kurang, Kali, Bagi }
@@ -63,7 +69,9 @@ public class GameController : MonoBehaviour
         ApplyMusicSetting();
         GenerateSoal();
         UpdateScoreUI();
-        
+
+        updateNyawa(); // Update nyawa UI at start
+
         gameOverCanvasGroup = gameOverPanel.GetComponent<CanvasGroup>();
         gameOverPanel.SetActive(false); // ⬅️ Nonaktifkan saat start
         star_1.enabled = false; // Sembunyikan bintang saat start
@@ -79,6 +87,21 @@ public class GameController : MonoBehaviour
 
         //Debug.Log("Timer di GameScene: " + timer + " detik");
 
+    }
+
+    public void updateNyawa()
+    {
+        for (int i = 0; i < nyawaSprite.Length; i++)
+        {
+            if (i < nyawa)
+            {
+                nyawaSprite[i].sprite = nyawaPenuhSprite; // Set full heart sprite
+            }
+            else
+            {
+                nyawaSprite[i].sprite = nyawaHabisSprite; // Set empty heart sprite
+            }
+        }
     }
 
     public void TonggleBtnPause()
@@ -163,19 +186,19 @@ public class GameController : MonoBehaviour
 
         do
         {
-            // Tentukan operator berdasarkan level
+            // Pilih operator sesuai level
             if (currentLevel <= 2)
                 currentOperator = Operator.Tambah;
             else if (currentLevel <= 4)
                 currentOperator = (Operator)Random.Range(0, 2); // Tambah / Kurang
-            else
+            else if (currentLevel <= 7)
                 currentOperator = (Operator)Random.Range(0, 3); // Tambah / Kurang / Kali
-            //else
-            //    currentOperator = (Operator)Random.Range(0, 4); // Semua termasuk Bagi
+            else
+                currentOperator = (Operator)Random.Range(0, 4); // Semua termasuk Bagi (opsional)
 
-            // Atur range angka berdasarkan level
+            // Atur range angka dinamis
             int min = 1;
-            int max = 9;
+            int max = 9 + currentLevel * 2;
 
             switch (currentOperator)
             {
@@ -196,14 +219,23 @@ public class GameController : MonoBehaviour
                     angka2 = Random.Range(min, max + 1);
                     jawabanBenar = angka1 * angka2;
                     break;
+
+                case Operator.Bagi:
+                    angka2 = Random.Range(1, max + 1);
+                    jawabanBenar = Random.Range(1, max + 1);
+                    angka1 = angka2 * jawabanBenar; // supaya hasil bagi bulat
+                    break;
             }
-        } while (angka1 == prevAngka1 && angka2 == prevAngkas2 && currentOperator == prevOperator);
+
+        } while ((angka1 == prevAngka1 && angka2 == prevAngkas2 && currentOperator == prevOperator)
+                  || jawabanBenar == prevJawaban);
 
         prevAngka1 = angka1;
         prevAngkas2 = angka2;
         prevOperator = currentOperator;
+        prevJawaban = jawabanBenar;
 
-        // Tampilkan angka & operator pakai sprite 2 digit
+        // Tampilkan angka & operator pakai sprite
         angka1sprite.sprite = angkaSprites[angka1];
         angka2sprite.sprite = angkaSprites[angka2];
         operatorImage.sprite = operatorSprites[(int)currentOperator];
@@ -221,7 +253,10 @@ public class GameController : MonoBehaviour
             {
                 do
                 {
-                    pilihan = jawabanBenar + Random.Range(-10, 11); // mirip2
+                    int offset = Random.Range(-3, 4); // makin mirip
+                    if (currentLevel > 5) offset = Random.Range(-7, 8); // level lebih tinggi, variasi lebih besar
+
+                    pilihan = jawabanBenar + offset;
                 } while (pilihan == jawabanBenar || pilihan < 0);
             }
 
@@ -256,7 +291,7 @@ public class GameController : MonoBehaviour
 
     //            angkaKe = 1;
     //        }
- 
+
     //    }
     //    else
     //    {
@@ -295,7 +330,16 @@ public class GameController : MonoBehaviour
                 skor -= 1; // Decrease score by 1 for wrong answer
             sfxSource.PlayOneShot(wrongSFX); // Play game over sound
             UpdateScoreUI();
-            gameOver(); // Call game over method
+            nyawa--; // Decrease life
+            if (nyawa > 0)
+            {
+                updateNyawa(); // Update nyawa UI
+            }
+            else
+            {
+                updateNyawa(); // Update nyawa UI
+                gameOver(); // Call game over method
+            }
         }
 
         Invoke("GenerateSoal", 1.5f); // Wait for 1.5 seconds before generating a new question
