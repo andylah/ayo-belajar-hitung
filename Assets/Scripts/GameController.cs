@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using GoogleMobileAds.Api;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI usernameText;
     public TextMeshProUGUI lblPertanyaan;
     public CanvasGroup BtnJawabanGroup;
+    public Button homeButton;
 
     public GameObject gameOverPanel; // Panel to show when the game is over
     public Image star_1;
@@ -67,6 +69,7 @@ public class GameController : MonoBehaviour
     private int gameTimer;
     private string username;
     string templateDefault = "Berapa {0} + {2} = ?";
+    private bool remAds = false;
 
     string[] templateTambah = {
         "Budi punya {0} apel, lalu diberi {1} apel lagi, berapa apel Budi?",
@@ -138,10 +141,21 @@ public class GameController : MonoBehaviour
 
         timer = (float)gameTimer; // Set timer sesuai setting
 
+        remAds = intToBool(PlayerPrefs.GetInt("RemoveAds"));
+
         username = PlayerPrefs.GetString("username", "Player"); // Load username from PlayerPrefs
         usernameText.text = username;
 
-        //Debug.Log("Timer di GameScene: " + timer + " detik");
+        Debug.Log("Google Mobile Ads SDK Version: " + MobileAds.GetVersion());
+    }
+
+
+    public bool intToBool(int val){
+        if (val == 1){
+            return true;
+        }else {
+            return false;
+        }
     }
 
     public void updateNyawa()
@@ -172,7 +186,8 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            AdsController.Instance.ShowInterstitialAd();
+            if (remAds)
+                AdsController.Instance.ShowInterstitialAd();
             Time.timeScale = 0f;
             pauseButtonImage.sprite = playIcon;
             isPaused = true;
@@ -226,7 +241,7 @@ public class GameController : MonoBehaviour
         if (newLevel != currentLevel)
         {
             //show interstitial ad every 3 levels
-            AdsController.Instance.ShowInterstitialAd();
+            //AdsController.Instance.ShowInterstitialAd();
 
             currentLevel = newLevel;
             levelText.text = currentLevel.ToString();
@@ -510,7 +525,8 @@ public class GameController : MonoBehaviour
 
     public void RestartGame()
     {
-        AdsController.Instance.ShowInterstitialAd(); // Show ad on restart
+        if (remAds)
+            AdsController.Instance.ShowInterstitialAd(); // Show ad on restart
         skor = 0;
         currentLevel = 1;
         nyawa = 3; // Reset nyawa
@@ -528,7 +544,8 @@ public class GameController : MonoBehaviour
         // Logic to return to the main menu
         // For example, you can load the main menu scene
         //show interstitial ad every 3 levels
-        AdsController.Instance.ShowInterstitialAd();
+        if (remAds)
+            AdsController.Instance.ShowInterstitialAd();
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); // Ganti dengan nama scene menu utama Anda
     }
 

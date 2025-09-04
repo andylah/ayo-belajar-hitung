@@ -6,7 +6,7 @@ public class IAPManager : MonoBehaviour, IStoreListener
     private static IStoreController controller;
     private static IExtensionProvider extensions;
 
-    public static string removeAds = "remove_ads"; // ID produk sama dengan di Play Console
+    public static string removeAds = "ads_01"; // ID produk sama dengan di Play Console
 
     void Start()
     {

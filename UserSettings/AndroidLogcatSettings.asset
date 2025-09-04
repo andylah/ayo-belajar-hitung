@@ -1,9 +1,9 @@
 {
-    "m_SelectedDeviceId": "25e4b184a30d7ece",
+    "m_SelectedDeviceId": "emulator-5554",
     "m_SelectedProcess": {
-        "deviceId": "",
-        "name": "",
-        "processId": 0,
+        "deviceId": "emulator-5554",
+        "name": "com.andylah.indonesiaflightinfoboard",
+        "processId": 7754,
         "exited": false
     },
     "m_SelectedPriority": 0,
@@ -36,6 +36,18 @@
             "deviceId": "25e4b184a30d7ece",
             "name": "com.sec.android.app.launcher",
             "processId": 2188,
+            "exited": false
+        },
+        {
+            "deviceId": "emulator-5554",
+            "name": "com.andylah.indonesiaflightinfoboard",
+            "processId": 5318,
+            "exited": false
+        },
+        {
+            "deviceId": "emulator-5554",
+            "name": "com.andylah.indonesiaflightinfoboard",
+            "processId": 7754,
             "exited": false
         }
     ],

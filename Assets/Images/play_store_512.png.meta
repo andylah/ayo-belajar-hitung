@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 60eb72f77602b6649bc68092116fa1e8
+guid: 1ad896c4f0604474289bd4a1ca3b06f4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2170712247897187164
-    second: launcher_0
+      213: -3413520060741168765
+    second: play_store_512_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: launcher_0
+      name: play_store_512_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4ac9f7226b410e1e0800000000000000
-      internalID: -2170712247897187164
+      spriteID: 3815ad1279db0a0d0800000000000000
+      internalID: -3413520060741168765
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      launcher_0: -2170712247897187164
+      play_store_512_0: -3413520060741168765
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

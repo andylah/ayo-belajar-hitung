@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GoogleMobileAds.Api;
 using UnityEngine;
 
@@ -64,7 +65,15 @@ public class AdsController : MonoBehaviour
         _bannerView.OnBannerAdLoaded += OnBannerAdLoaded;
         _bannerView.OnBannerAdLoadFailed += OnBannerAdLoadFailed;
 
-        AdRequest adRequest = new AdRequest();
+        // ✅ Non-personalized ad request
+        var adRequest = new AdRequest
+        {
+            Extras = new Dictionary<string, string>
+            {
+                { "npa", "1" }
+            }
+        };
+
         _bannerView.LoadAd(adRequest);
     }
 
@@ -89,7 +98,15 @@ public class AdsController : MonoBehaviour
             _interstitialAd = null;
         }
 
-        var adRequest = new AdRequest();
+        // ✅ Non-personalized ad request
+        var adRequest = new AdRequest
+        {
+            Extras = new Dictionary<string, string>
+            {
+                { "npa", "1" }
+            }
+        };
+
         InterstitialAd.Load(InterstitialAdUnitId, adRequest, (InterstitialAd ad, LoadAdError error) =>
         {
             if (error != null || ad == null)
